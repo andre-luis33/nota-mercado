@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Gerador de Notinha do Mercado</title>
+</head>
+<body class="container">
+   <h1 class="main-title">
+      Gerador de Notinha do Mercado
+   </h1>
+   <p class="main-description">
+      Esse é um simples gerador daquela notinha de mercado que todo mundo tem perdido no fundo da mochila, carteira, bolsa... E se pá, ela tá apagada :/
+   </p>
+
+   <form action="../controller/receipt.php" method="POST">
+      <div class="inputs-container">
+         <div class="form-row">
+            <div class="form-block">
+               <label for="code-33">Código</label>
+               <input type="number" id="code-33" name="code[]" value="33">
+            </div>
+            <div class="form-block">
+               <label for="description-33">Nome</label>
+               <input type="text" id="description-33" name="description[]">
+            </div>
+            <div class="form-block">
+               <label for="price-33">Preço</label>
+               <input type="text" id="price-33" name="price[]">
+            </div>
+         </div>
+      </div>
+
+      <button type="button" id="btn-add-row">Adicionar Novo</button>
+      <button>Enviar</button>
+   </form>
+   <script>
+      
+      (function() {
+
+         // 33 can't be cause it's the initial code =)
+         const randomInt = (min = 0, max = 10000) => { 
+            let n = Math.floor(Math.random() * (max - min + 1) + min)
+            return n === 33 ? randomInt() : n
+         }
+         
+         let form = document.querySelector('form')
+         let inputsContainer = document.querySelector('.inputs-container')
+
+         const addRow = () => {
+            const code = randomInt()
+
+            inputsContainer.innerHTML+= `
+               <div class="form-row">
+                  <div class="form-block">
+                     <label for="code-${code}">Código</label>
+                     <input type="number" id="code-${code}" name="code[]" value="${code}">
+                  </div>
+                  <div class="form-block">
+                     <label for="description-${code}">Nome</label>
+                     <input type="text" id="description-${code}" name="description[]">
+                  </div>
+                  <div class="form-block">
+                     <label for="price-${code}">Preço</label>
+                     <input type="text" id="price-${code}" name="price[]">
+                  </div>
+               </div>
+            `
+         }
+
+
+         let btnAddRow = document.querySelector('#btn-add-row')
+         btnAddRow.onclick = addRow
+
+         
+
+         
+      })()
+
+   </script>
+</body>
+<style>
+   * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Helvetica";
+   }
+
+   body {
+      height: 100vh;
+      background-color: #222;
+   }
+
+   .text-center {
+      text-align: center;
+   }
+
+   .container {
+      max-width: 1366px;
+      margin: 0 auto;
+      padding: 0 30px;
+   }
+
+   .main-title {
+      margin: 10px 0;
+      text-align: center;
+      color: #fff;
+
+      position: relative;
+   }
+
+   .main-title::after {
+      content: '';
+      display: block;
+
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      right: 0;
+
+      height: 3px;
+      width: 15%;
+      margin: 0 auto;
+      border-radius: 10px;
+
+      background-color: #fff;
+   }
+
+   .main-description {
+      margin-top: 20px;
+      text-align: center;
+      color: #fff;
+   }
+</style>
+</html>
