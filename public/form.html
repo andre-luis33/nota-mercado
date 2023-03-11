@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+   <title>Gerador de Notinha do Mercado</title>
+</head>
+<body class="container py-4">
+   <h1 class="main-title text-center">
+      Gerador de Notinha do Mercado
+      <i class="fas fa-receipt"></i>
+   </h1>
+   
+   <p class="alert alert-primary my-4">
+      Esse é um simples gerador daquela notinha de mercado que todo mundo tem perdido no fundo da mochila, carteira, bolsa... E se pá, ela tá apagada :/
+   </p>
+
+   <form action="#" method="POST">
+
+      <div class="card p-4">
+
+         <div class="form-group">
+            <div class="form-row">
+
+               <div class="col-md-6">
+                  <h5 class="card-title">Nome da Loja</h5>
+                  <input type="text" class="form-control" name="store-name" value="RENNER LTDA">
+               </div>
+
+               <div class="col-md-6">
+                  <h5 class="card-title">Endereço da Loja (Máx: 42)</h5>
+                  <input type="text" class="form-control" name="store-address" value="AV. DAS AMERICAS 4099 - LOJA A">
+               </div>
+
+            </div>
+         </div>
+         <div class="form-group">
+            <div class="form-row">
+
+               <div class="col-md-6">
+                  <h5 class="card-title">CNPJ da Loja</h5>
+                  <input type="text" class="form-control" name="store-cnpj" value="45.543.915/0206-11">
+               </div>
+
+               <div class="col-md-6">
+                  <h5 class="card-title">Telefone</h5>
+                  <input type="text" class="form-control" name="store-phone" value="(21) 2544-0772">
+               </div>
+
+            </div>
+         </div>
+   
+         <hr>
+
+         <h4 class="callout-title">Produtos da Compra:</h4>
+
+         <div class="inputs-wrapper alert alert-info">
+            <div class="form-row" data-row="33">
+               <div class="col-md-2">
+                  <label for="code-33">Código</label>
+                  <input type="number" class="form-control" id="code-33" name="code[]" value="33">
+               </div>
+               <div class="col-md-4">
+                  <label for="description-33">Nome</label>
+                  <input type="text" class="form-control" id="description-33" name="description[]">
+               </div>
+               <div class="col-md-4">
+                  <label for="price-33">Preço</label>
+                  <input type="text" class="form-control" id="price-33" name="price[]">
+               </div>
+               <div class="col-md-2">
+                  <label for="">&nbsp;</label> <br>
+                  <button type="button" class="btn btn-primary" id="btn-add-row">Adicionar Novo <i class="fas fa-plus ml-1"></i></button>
+               </div>
+            </div>
+         </div>
+
+         
+
+         <h4 class="callout-title mt-2 mb-2">
+            Total de produtos: <span id="products-count">1</span>
+         </h4>
+
+         <hr>
+
+         <div class="form-group">
+            <div class="form-row">
+               <div class="col-md-6">
+                  <h5 class="card-title">Valor Pago</h5>
+                  <input type="text" class="form-control" name="payed-value">
+               </div>
+               <div class="col-md-6">
+                  <h5 class="card-title">Data/Hora da Compra</h5>
+                  <input type="datetime-local" class="form-control" name="receipt-date">
+                  <small>Se não passar nada, será a data/hora atual!</small>
+               </div>
+            </div>
+         </div>
+
+         <div class="footer-wrapper">
+            <button type="submit" class="btn btn-success" id="btn-submit">Gerar Notinha <i class="fas fa-receipt ml-1"></i></button>
+            <button type="submit" class="btn btn-info" id="btn-submit-download">Baixar Notinha <i class="fas fa-download ml-1"></i></button>
+         </div>
+      </div>
+
+   </form>
+   <script>
+      
+      (function() {
+
+         // 33 can't be cause it's the initial code =)
+         const randomInt = (min = 0, max = 10000) => { 
+            let n = Math.floor(Math.random() * (max - min + 1) + min)
+            return n === 33 ? randomInt() : n
+         }
+         
+         const form = document.querySelector('form')
+         form.onsubmit = e => {
+            let allInputsHaveValue = true
+            const inputs = form.querySelectorAll('input:not([type="datetime-local"])')
+            inputs.forEach(input => {
+               const isEmpty = input.value === ''
+               if(isEmpty) {
+                  input.classList.add('is-invalid')
+                  allInputsHaveValue = false
+               } else {
+                  input.classList.remove('is-invalid')
+               }
+            })
+
+            if(!allInputsHaveValue) {
+               e.preventDefault()
+            }
+         }
+
+         const btnAddRow = document.querySelector('#btn-add-row')
+         btnAddRow.onclick = addRow
+
+         const btnDownload = document.querySelector('#btn-submit-download') 
+         const btnSubmit   = document.querySelector('#btn-submit') 
+
+         btnDownload.onclick = e => {
+            form.setAttribute('action', '/?download=true')
+         }
+
+         btnSubmit.onclick = e => {
+            form.setAttribute('action', '/')
+         }
+
+         const inputsContainer = document.querySelector('.inputs-wrapper')
+         function addRow() {
+
+            const code = randomInt()
+
+            inputsContainer.insertAdjacentHTML('beforeend', `
+               <div class="form-row mt-2" data-row="${code}">
+                  <div class="col-md-2">
+                     <label for="code-${code}">Código</label>
+                     <input type="number" class="form-control" id="code-${code}" name="code[]" value="${code}">
+                  </div>
+                  <div class="col-md-4">
+                     <label for="description-${code}">Nome</label>
+                     <input type="text" class="form-control" id="description-${code}" name="description[]">
+                  </div>
+                  <div class="col-md-4">
+                     <label for="price-${code}">Preço</label>
+                     <input type="text" class="form-control" id="price-${code}" name="price[]">
+                  </div>
+                  <div class="col-md-2">
+                     <label>&nbsp;&nbsp;&nbsp;</label> <br>
+                     <button type="button" class="btn btn-danger" data-btn-delete-row="${code}">Apagar Produto <i class="fas fa-trash"></i></button>
+                  </div>
+               </div>
+            `)
+
+            const currentBtn = document.querySelector(`[data-btn-delete-row="${code}"]`)
+            currentBtn.onclick = () => deleteRow(code)
+            
+            setProductsCount()
+         }
+
+         function deleteRow(rowNumber) {
+            const row = document.querySelector(`.form-row[data-row="${parseInt(rowNumber)}"]`)
+            console.log(rowNumber);
+            if(!row)
+               return
+            
+            row.remove()
+            setProductsCount()
+         }
+
+         const productsCountElement = document.querySelector('#products-count')
+         function setProductsCount () {
+            const rowCount = document.querySelectorAll('.form-row[data-row]').length
+            productsCountElement.textContent = rowCount
+         }
+         
+      })()
+
+   </script>
+</body>
+<style>
+
+   .callout-title {
+      border-left: 4px solid var(--info);
+      padding: 5px 0 5px 15px;
+   }
+
+</style>
+</html>

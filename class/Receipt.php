@@ -20,6 +20,8 @@ class Receipt {
    private Array $products;
    private Float $purchaseTotalValue;
    private Float $purchasePayedValue;
+   private DateTime $receiptDate;
+
 
    public function setStoreName(String $storeName): void {
       $this->storeName = $storeName;
@@ -51,6 +53,14 @@ class Receipt {
 
    public function getStorePhoneNumber(): string {
       return $this->storePhoneNumber;
+   }
+
+   public function setReceiptDate(DateTime $date) {
+      $this->receiptDate = $date;
+   }
+
+   public function getReceiptDate(): DateTime {
+      return $this->receiptDate;
    }
 
    public function productsArrayIsValid(Array $products): bool {
@@ -150,17 +160,31 @@ class Receipt {
    }
 
    public function getProductsHeight(): int {
-      return count($this->getPurchaseProducts()) * 20;
-   }
+      $products = $this->getPurchaseProducts();
+      $height = 0;
+      foreach($products as $product) {
+         $productDescription = $product['description'];
+         if(strlen($productDescription) <= self::DESCRIPTION_MAX_LENGTH) {
+            $height+=20;
+            continue;
+         }
 
-   public function output($pathName = null): void {
+         $linesCount = strlen($productDescription) / (self::DESCRIPTION_MAX_LENGTH - 1);
+         $currentDescriptionHeight = (int) ($linesCount*20);
+         $height+=$currentDescriptionHeight;
+      }  
+
+      return $height;
+   }
+   
+   public function output($isDownload = false): void {
       $requiredAttributes = [
          $this->getStoreName(), $this->getStoreAddress(), $this->getStoreCnpj(), $this->getPurchaseProducts()
       ];
 
       if(in_array('', $requiredAttributes)) throw new Exception('All store\'s attributes must be provided!');
 
-      $receiptDate = date('d/m/Y H:i:s');
+      $receiptDate = $this->getReceiptDate() ? $this->getReceiptDate()->format('d/m/Y H:i:s') : date('d/m/Y H:i:s');
       $productsHeight = $this->getProductsHeight();
 
       $img = imagecreate(self::RECEIPT_WIDTH, (self::RECEIPT_MIN_HEIGHT + $productsHeight));
@@ -240,11 +264,15 @@ class Receipt {
       
       // setting receipt code hash
       $positionY+=20;
-      imagestring($img, 5, 20, $positionY, 'CODIGO: '.$this->getReceiptCode(), $textColor);
+      imagestring($img, 5, 10, $positionY, 'CODIGO: '.$this->getReceiptCode(), $textColor);
       
       // outputting
       header('Content-Type: image/png');
-      imagepng($img, $pathName, 9);
+      if($isDownload) {
+         header('Content-Disposition: attachment; filename=notinha.png');
+      }
+
+      imagepng($img, null, 9);
       imagedestroy($img);
    }
 
