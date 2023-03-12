@@ -1,5 +1,10 @@
 <?php
 
+if(!extension_loaded('gd')) {
+   die('A extensão "gd" é necessária para gerar a notinha, e ela não foi encontrada na sua instalação PHP :(');
+}
+
+
 $productsCount = count($_POST['code']);
 $isDownload = $_GET['download'] == 'true';
 
