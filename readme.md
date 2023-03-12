@@ -1,3 +1,11 @@
-### Para printar as descrições dos produtos de forma que não sobreponha e gere quantas linhas precisar, foi usado recursão
+# Gerador de Notinha do Mercado
 
-## Requirements
+Gere notinhas dinâmicas de acordo com as informações fornecidas
+
+## Prerequisites/Requirements
+
+- gd (extension)
+
+## Instalation
+
+Para começar, você precisa ter a extensão do php `gd` instalada
