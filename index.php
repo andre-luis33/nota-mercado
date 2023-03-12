@@ -6,7 +6,7 @@ date_default_timezone_set('America/Sao_Paulo');
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 if($requestMethod === 'GET') {
    require('./public/form.html'); 
-} else {
+} else if($requestMethod === 'POST') {
    require('./controller/receipt.php');
 }
 
